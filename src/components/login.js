@@ -11,7 +11,7 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get("http://localhost:4001/users"); // Adjust endpoint if needed
+      const response = await axios.get("https://loanbuddy-server.onrender.com/users"); // Adjust endpoint if needed
       const users = response.data;
       
       const user = users.find(

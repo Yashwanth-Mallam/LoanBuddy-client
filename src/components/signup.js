@@ -16,7 +16,7 @@ export default function SignUpPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:4001/users", {
+      const response = await axios.post("https://loanbuddy-server.onrender.com/users", {
         fullName,
         email,
         password,
