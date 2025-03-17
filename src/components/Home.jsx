@@ -64,14 +64,9 @@ export default function LoanBuddyHomePage() {
         </motion.div>
       </div>
 
-      {/* Footer */}
-      <motion.footer 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        transition={{ duration: 0.6 }}
-        className="text-center py-6 bg-purple-900 text-white shadow-lg">
-        <p>&copy; 2025 Loan Buddy. All rights reserved.</p>
-      </motion.footer>
+      console.log("Navbar rendered");
+console.log("Hero Section rendered");
+console.log("Middle Content rendered");
     </div>
   );
 }

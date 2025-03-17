@@ -77,6 +77,15 @@ export default function LoanBuddyLandingpage() {
         onClick={handleSignup}
         className="mt-6 bg-white text-purple-700 hover:bg-gray-200 px-4 py-2 rounded">Sign Up</button>
       </motion.div>
+      {/* Footer */}
+      <motion.footer 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.6 }}
+        className="text-center py-6 bg-purple-900 text-white shadow-lg">
+        <p>&copy; 2025 Loan Buddy. All rights reserved.</p>
+      </motion.footer>
     </div>
+    
   );
 }
