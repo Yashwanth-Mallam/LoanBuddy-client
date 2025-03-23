@@ -6,6 +6,7 @@ import LoanBuddyLandingpage from "./components/landing";
 import HomePage from "./components/Home";
 import SignUpPage from "./components/signup";
 import ProfilePage from "./components/profile";
+import ChatPage from "./components/chat";
 function App() {
   return (
     <Router>
@@ -15,6 +16,7 @@ function App() {
         <Route path="/SignUp" element={<SignUpPage />} />
         <Route path="/Home" element={<HomePage />} />
         <Route path="/Profile" element={<ProfilePage />} />
+        <Route path="/Chat" element={<ChatPage />} />
       </Routes>
     </Router>
   );
