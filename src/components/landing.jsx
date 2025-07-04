@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Wallet, Shield, TrendingUp, Users } from 'lucide-react';
+import { Shield, TrendingUp, Users } from 'lucide-react';
 
 const LandingPage = () => {
   return (

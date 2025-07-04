@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
+import {registerUser} from "../Api/UserApi";
+
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
     userType: 'borrower'
   });
+  const navigate =useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
+    try {
+      const response = await registerUser(formData);
+      console.log("Account created successfully:", response);
+      console.log("user data:",response);
+      localStorage.setItem("token", response); 
+      navigate("/home")
+    } catch (error) {
+      console.error("Error creating account:", error.message);
+    }
   };
 
   const handleChange = (e) => {
@@ -44,7 +54,7 @@ const SignupPage = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 ">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                   First name
@@ -54,21 +64,6 @@ const SignupPage = () => {
                   name="firstName"
                   id="firstName"
                   value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                  Last name
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  id="lastName"
-                  value={formData.lastName}
                   onChange={handleChange}
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -132,8 +127,8 @@ const SignupPage = () => {
                 onChange={handleChange}
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
               >
-                <option value="borrower">Borrow money</option>
-                <option value="lender">Lend money</option>
+                <option value="borrower">Borrower</option>
+                <option value="lender">Lender</option>
               </select>
             </div>
 

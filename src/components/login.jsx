@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
-
+import {loginUser} from "../Api/UserApi";
+import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
+    
+    const formData = { email, password }; 
+
+    try {
+      const response = await loginUser(formData); 
+      console.log("Login successful:", response);
+      //this will stire the token in local storage.
+      localStorage.setItem("token", response); 
+      
+      navigate("/home"); 
+    } catch (error) {
+      console.error(
+        "Login failed:",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
+  
+  
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

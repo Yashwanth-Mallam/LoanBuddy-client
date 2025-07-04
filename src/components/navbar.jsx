@@ -18,6 +18,9 @@ const Navbar = () => {
             <Link to="/home" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
               Home
             </Link>
+            <Link to="/profile" className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+              Profile
+            </Link>
             <Link to="/login" className="flex items-center text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
               <LogIn className="h-4 w-4 mr-1" />
               Logout

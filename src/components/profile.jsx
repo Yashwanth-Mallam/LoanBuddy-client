@@ -1,17 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, CreditCard, FileText, Settings, Bell } from 'lucide-react';
+import { getUserProfile } from "../Api/UserProfileApi";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const user = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    memberSince: 'January 2024',
-    creditScore: 750,
-    totalLoans: 3,
-    activeLoans: 1
-  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getUserProfile();
+        console.log("profile data:",data);
+        
+        setProfile(data); // Set the profile state
+      } catch (err) {
+        if (err.response?.status === 404) {
+          // If profile not found, set an empty profile
+          setProfile({
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
+            address: "",
+            city: "",
+            state: "",
+            country: "",
+            zipCode: "",
+            profilePicture: "",
+            about: "",
+            occupation: "",
+            income: "",
+            creditScore: "",
+            creditHistory: "",
+            loanCapacity: "",
+            user: {
+              id: "",
+              name: "",
+              email: "",
+              type: "",
+            },
+          });
+        } else {
+          setError(err.response ? err.response.data.message : err.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchProfile();
+  }, []);
+  
+
+  if (loading) {
+    return <div className="text-center py-10">Loading profile...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 py-10">Error: {error}</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -29,70 +77,43 @@ const ProfilePage = () => {
           <div className="bg-white shadow rounded-lg p-6">
             <div className="flex items-center">
               <div className="h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
-                <User className="h-12 w-12 text-gray-400" />
+                {profile?.profilePicture ? (
+                  <img
+                    src={profile.profilePicture}
+                    alt="Profile"
+                    className="h-20 w-20 rounded-full"
+                  />
+                ) : (
+                  <User className="h-12 w-12 text-gray-400" />
+                )}
               </div>
               <div className="ml-6">
-                <h3 className="text-xl font-medium text-gray-900">{user.name}</h3>
-                <p className="text-sm text-gray-500">Member since {user.memberSince}</p>
+                <h3 className="text-xl font-medium text-gray-900">
+                  {profile?.firstName || "N/A"} {profile?.lastName || ""}
+                </h3>
+                <p className="text-sm text-gray-500">Member since 2024</p>
               </div>
             </div>
 
             <nav className="mt-8 space-y-2">
-              <button
-                onClick={() => setActiveTab('profile')}
-                className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'profile'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <User className="h-5 w-5 mr-3" />
-                Profile Information
-              </button>
-              <button
-                onClick={() => setActiveTab('loans')}
-                className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'loans'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <CreditCard className="h-5 w-5 mr-3" />
-                Loan History
-              </button>
-              <button
-                onClick={() => setActiveTab('documents')}
-                className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'documents'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <FileText className="h-5 w-5 mr-3" />
-                Documents
-              </button>
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'settings'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <Settings className="h-5 w-5 mr-3" />
-                Settings
-              </button>
-              <button
-                onClick={() => setActiveTab('notifications')}
-                className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'notifications'
-                    ? 'bg-indigo-100 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <Bell className="h-5 w-5 mr-3" />
-                Notifications
-              </button>
+              {["profile", "loans", "documents", "settings", "notifications"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`w-full flex items-center px-4 py-2 text-sm font-medium rounded-md ${
+                    activeTab === tab
+                      ? "bg-indigo-100 text-indigo-700"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
+                >
+                  {tab === "profile" && <User className="h-5 w-5 mr-3" />}
+                  {tab === "loans" && <CreditCard className="h-5 w-5 mr-3" />}
+                  {tab === "documents" && <FileText className="h-5 w-5 mr-3" />}
+                  {tab === "settings" && <Settings className="h-5 w-5 mr-3" />}
+                  {tab === "notifications" && <Bell className="h-5 w-5 mr-3" />}
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
             </nav>
           </div>
         </div>
@@ -100,7 +121,7 @@ const ProfilePage = () => {
         {/* Main Content */}
         <div className="lg:col-span-2">
           <div className="bg-white shadow rounded-lg">
-            {activeTab === 'profile' && (
+            {activeTab === "profile" && (
               <div className="p-6">
                 <h3 className="text-lg font-medium text-gray-900 mb-6">Profile Information</h3>
                 <div className="space-y-6">
@@ -108,7 +129,7 @@ const ProfilePage = () => {
                     <label className="block text-sm font-medium text-gray-700">Full Name</label>
                     <input
                       type="text"
-                      value={user.name}
+                      value={`${profile?.firstName || ""} ${profile?.lastName || ""}`}
                       readOnly
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
                     />
@@ -117,30 +138,64 @@ const ProfilePage = () => {
                     <label className="block text-sm font-medium text-gray-700">Email</label>
                     <input
                       type="email"
-                      value={user.email}
+                      value={profile?.user?.email || "N/A"}
                       readOnly
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Credit Score</label>
-                      <div className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900">
-                        {user.creditScore}
-                      </div>
+                      <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                      <input
+                        type="text"
+                        value={profile?.phoneNumber || "N/A"}
+                        readOnly
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
+                      />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700">Active Loans</label>
-                      <div className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900">
-                        {user.activeLoans} of {user.totalLoans}
-                      </div>
+                      <label className="block text-sm font-medium text-gray-700">Occupation</label>
+                      <input
+                        type="text"
+                        value={profile?.occupation || "N/A"}
+                        readOnly
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
+                      />
                     </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Income</label>
+                      <input
+                        type="text"
+                        value={`$${profile?.income || "0"}`}
+                        readOnly
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Credit Score</label>
+                      <input
+                        type="text"
+                        value={profile?.creditScore || "N/A"}
+                        readOnly
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Address</label>
+                    <textarea
+                      value={`${profile?.address || ""}, ${profile?.city || ""}, ${profile?.state || ""}, ${profile?.zipCode || ""}, ${profile?.country || ""}`}
+                      readOnly
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-900"
+                    />
                   </div>
                 </div>
               </div>
             )}
-            
-            {/* Add content for other tabs as needed */}
+
+            {/* Other tabs (loans, documents, settings, etc.) can be added here */}
           </div>
         </div>
       </div>
